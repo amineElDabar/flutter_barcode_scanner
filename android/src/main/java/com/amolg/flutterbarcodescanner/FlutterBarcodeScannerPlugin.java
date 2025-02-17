@@ -30,7 +30,7 @@ import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 import io.flutter.plugin.common.EventChannel.StreamHandler;
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 
-public class FlutterBarcodeScannerPlugin implements MethodCallHandler, ActivityResultListener, StreamHandler, FlutterPlugin, ActivityAware {
+public class FlutterBarcodeScannerPlugin implements MethodCallHandler, ActivityResultListener, StreamHandler, FlutterPlugin, ActivityAware ,Serializable{
     private static final String CHANNEL = "flutter_barcode_scanner";
 
     private FlutterActivity activity; // Instance variable
@@ -164,7 +164,7 @@ private void startBarcodeScannerActivityView(String buttonText, boolean isContin
     try {
         Intent intent = new Intent(activity, BarcodeCaptureActivity.class)
                 .putExtra("cancelButtonText", buttonText)
-                .putExtra("plugin", this); // Pass the plugin instance
+                .putExtra("plugin", (Serializable) this); // Cast to Serializable
         if (isContinuousScan) {
             activity.startActivity(intent);
         } else {

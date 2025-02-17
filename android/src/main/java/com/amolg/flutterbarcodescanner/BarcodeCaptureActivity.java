@@ -100,21 +100,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
 
     private int flashStatus = USE_FLASH.OFF.ordinal();
 
- private FlutterBarcodeScannerPlugin plugin; // Add this field
-
-    // Add a constructor to accept the plugin instance
-    public BarcodeCaptureActivity(FlutterBarcodeScannerPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    // Your existing code...
-
-    private void handleBarcodeResult(Barcode barcode) {
-        if (plugin != null) {
-            plugin.onBarcodeScanReceiver(barcode); // Call the method on the plugin instance
-        }
-    }
-
      private FlutterBarcodeScannerPlugin plugin;
 
     public BarcodeCaptureActivity(FlutterBarcodeScannerPlugin plugin) {
@@ -136,13 +121,13 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         try {
             setContentView(R.layout.barcode_capture);
 
-            Intent intent = getIntent();
-            if (intent != null) {
-                FlutterBarcodeScannerPlugin plugin = (FlutterBarcodeScannerPlugin) intent.getSerializableExtra("plugin");
-                if (plugin != null) {
-                    this.plugin = plugin;
-                }
-            }
+           Intent intent = getIntent();
+    if (intent != null) {
+        Serializable serializable = intent.getSerializableExtra("plugin");
+        if (serializable instanceof FlutterBarcodeScannerPlugin) {
+            this.plugin = (FlutterBarcodeScannerPlugin) serializable;
+        }
+    }
 
             String buttonText = "";
             try {

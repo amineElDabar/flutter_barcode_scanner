@@ -33,7 +33,7 @@ import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 public class FlutterBarcodeScannerPlugin implements MethodCallHandler, ActivityResultListener, StreamHandler, FlutterPlugin, ActivityAware {
     private static final String CHANNEL = "flutter_barcode_scanner";
 
-    private FlutterActivity activity;
+    private FlutterActivity activity; // Instance variable
     private Result pendingResult;
     private Map<String, Object> arguments;
 
@@ -208,13 +208,15 @@ public class FlutterBarcodeScannerPlugin implements MethodCallHandler, ActivityR
         barcodeStream = null;
     }
 
-    public static void onBarcodeScanReceiver(final Barcode barcode) {
+    public void onBarcodeScanReceiver(final Barcode barcode) {
         try {
-            if (barcode != null && !barcode.displayValue.isEmpty()) {
+            if (barcode != null && !barcode.displayValue.isEmpty() && activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        barcodeStream.success(barcode.rawValue);
+                        if (barcodeStream != null) {
+                            barcodeStream.success(barcode.rawValue);
+                        }
                     }
                 });
             }

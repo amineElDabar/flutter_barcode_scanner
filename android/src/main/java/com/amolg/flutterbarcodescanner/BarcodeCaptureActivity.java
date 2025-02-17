@@ -100,6 +100,33 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
 
     private int flashStatus = USE_FLASH.OFF.ordinal();
 
+ private FlutterBarcodeScannerPlugin plugin; // Add this field
+
+    // Add a constructor to accept the plugin instance
+    public BarcodeCaptureActivity(FlutterBarcodeScannerPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    // Your existing code...
+
+    private void handleBarcodeResult(Barcode barcode) {
+        if (plugin != null) {
+            plugin.onBarcodeScanReceiver(barcode); // Call the method on the plugin instance
+        }
+    }
+
+     private FlutterBarcodeScannerPlugin plugin;
+
+    public BarcodeCaptureActivity(FlutterBarcodeScannerPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    private void handleBarcodeResult(Barcode barcode) {
+        if (plugin != null) {
+            plugin.onBarcodeScanReceiver(barcode); 
+        }
+    }
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -108,6 +135,14 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         super.onCreate(icicle);
         try {
             setContentView(R.layout.barcode_capture);
+
+            Intent intent = getIntent();
+            if (intent != null) {
+                FlutterBarcodeScannerPlugin plugin = (FlutterBarcodeScannerPlugin) intent.getSerializableExtra("plugin");
+                if (plugin != null) {
+                    this.plugin = plugin;
+                }
+            }
 
             String buttonText = "";
             try {
@@ -415,7 +450,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
             Barcode barcode = new Barcode();
             barcode.rawValue = "-1";
             barcode.displayValue = "-1";
-            FlutterBarcodeScannerPlugin.onBarcodeScanReceiver(barcode);
+            handleBarcodeResult(barcode)
             finish();
         } else if (i == R.id.imgViewSwitchCamera) {
             int currentFacing = mCameraSource.getCameraFacing();
@@ -524,7 +559,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     public void onBarcodeDetected(Barcode barcode) {
         if (null != barcode) {
             if (FlutterBarcodeScannerPlugin.isContinuousScan) {
-                FlutterBarcodeScannerPlugin.onBarcodeScanReceiver(barcode);
+                handleBarcodeResult(barcode);
             } else {
                 Intent data = new Intent();
                 data.putExtra(BarcodeObject, barcode);

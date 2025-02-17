@@ -450,7 +450,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
             Barcode barcode = new Barcode();
             barcode.rawValue = "-1";
             barcode.displayValue = "-1";
-            handleBarcodeResult(barcode)
+            handleBarcodeResult(barcode);
             finish();
         } else if (i == R.id.imgViewSwitchCamera) {
             int currentFacing = mCameraSource.getCameraFacing();
